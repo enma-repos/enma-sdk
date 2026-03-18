@@ -8,11 +8,16 @@
         <NoWarn>$(NoWarn);CS1591</NoWarn>
 
         <PackageId>Enma.Sdk</PackageId>
-        <Version>0.1.0</Version>
+        <Version>0.1.1</Version>
         <Authors>Enma</Authors>
         <Description>Official .NET SDK for the Enma Ingest API. Provides buffered, batched event tracking with retry, middleware pipeline, and ASP.NET Core DI integration.</Description>
         <PackageTags>enma;analytics;events;ingest;sdk</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../../README.md" Pack="true" PackagePath="/" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="System.Text.Json" Version="6.0.11" />
