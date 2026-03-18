@@ -1,5 +1,7 @@
 # Enma.Sdk
 
+[![NuGet](https://img.shields.io/nuget/v/Enma.Sdk)](https://www.nuget.org/packages/Enma.Sdk)
+
 Official .NET SDK for the [Enma](https://enma.io) Ingest API. Provides buffered, batched event tracking with automatic retries, a middleware pipeline, and first-class ASP.NET Core integration.
 
 ## Installation
