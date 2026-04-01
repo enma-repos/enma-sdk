@@ -11,7 +11,7 @@ using Enma.Sdk.Serialization;
 
 namespace Enma.Sdk.Internal;
 
-internal sealed class HttpEventTransport
+internal sealed class HttpEventTransport : IEventTransport
 {
     private const int MaxServerBatchSize = 200;
 
@@ -67,7 +67,7 @@ internal sealed class HttpEventTransport
                 using var request = new HttpRequestMessage(HttpMethod.Post, _endpoint);
                 request.Content = new ByteArrayContent(body);
                 request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _options.ApiToken);
+                request.Headers.TryAddWithoutValidation("X-Api-Key", _options.ApiToken);
 
                 using var response = await _httpClient.SendAsync(request, ct).ConfigureAwait(false);
 

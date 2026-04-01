@@ -41,7 +41,7 @@ public sealed class EnmaClientOptions
     /// <summary>
     /// Base URL of the Enma Ingest API.
     /// </summary>
-    public Uri BaseUrl { get; set; } = new("https://api.enma.io");
+    public Uri BaseUrl { get; set; } = new("https://sdk.enma.tech");
 
     /// <summary>
     /// Maximum number of events per HTTP request. Server limit is 200.

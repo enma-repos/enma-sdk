@@ -11,9 +11,9 @@ namespace Enma.Sdk.Core;
 public sealed class EnmaClient : IEnmaClient
 {
     private readonly EnmaClientOptions _options;
-    private readonly Channel<EnmaEvent> _channel;
-    private readonly EventMiddlewarePipeline _middleware;
-    private readonly BatchProcessor _processor;
+    private Channel<EnmaEvent> _channel = null!;
+    private EventMiddlewarePipeline _middleware = null!;
+    private BatchProcessor _processor = null!;
     private readonly HttpClient? _ownedHttpClient;
     private bool _disposed;
 
@@ -33,6 +33,19 @@ public sealed class EnmaClient : IEnmaClient
             httpClient = _ownedHttpClient;
         }
 
+        var transport = new HttpEventTransport(httpClient, _options);
+        InitializeCore(transport);
+    }
+
+    internal EnmaClient(EnmaClientOptions options, IEventTransport transport)
+    {
+        _options = options ?? throw new ArgumentNullException(nameof(options));
+        _options.Validate();
+        InitializeCore(transport);
+    }
+
+    private void InitializeCore(IEventTransport transport)
+    {
         _channel = Channel.CreateBounded<EnmaEvent>(new BoundedChannelOptions(_options.MaxQueueSize)
         {
             FullMode = BoundedChannelFullMode.DropOldest,
@@ -41,7 +54,6 @@ public sealed class EnmaClient : IEnmaClient
         });
 
         _middleware = new EventMiddlewarePipeline(_options.Middlewares);
-        var transport = new HttpEventTransport(httpClient, _options);
         _processor = new BatchProcessor(_channel.Reader, transport, _options);
     }
 

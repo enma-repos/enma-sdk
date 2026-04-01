@@ -11,7 +11,7 @@ namespace Enma.Sdk.Internal;
 internal sealed class BatchProcessor : IAsyncDisposable
 {
     private readonly ChannelReader<EnmaEvent> _reader;
-    private readonly HttpEventTransport _transport;
+    private readonly IEventTransport _transport;
     private readonly EnmaClientOptions _options;
     private readonly Task _backgroundTask;
     private readonly CancellationTokenSource _cts = new();
@@ -22,7 +22,7 @@ internal sealed class BatchProcessor : IAsyncDisposable
 
     public BatchProcessor(
         ChannelReader<EnmaEvent> reader,
-        HttpEventTransport transport,
+        IEventTransport transport,
         EnmaClientOptions options)
     {
         _reader = reader;

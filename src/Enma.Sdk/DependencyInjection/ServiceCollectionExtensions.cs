@@ -1,5 +1,4 @@
 using System;
-using System.Net.Http;
 using Enma.Sdk.Core;
 using Enma.Sdk.Internal;
 using Microsoft.Extensions.Configuration;
@@ -14,8 +13,6 @@ namespace Enma.Sdk.DependencyInjection;
 /// </summary>
 public static class ServiceCollectionExtensions
 {
-    private const string HttpClientName = "EnmaIngest";
-
     /// <summary>
     /// Registers <see cref="IEnmaClient"/> as a singleton with the provided configuration.
     /// Adds a hosted service for graceful shutdown.
@@ -48,14 +45,17 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddEnmaCore(this IServiceCollection services)
     {
-        services.AddHttpClient(HttpClientName);
+        services.AddHttpClient<HttpEventTransport>((sp, client) =>
+        {
+            var options = sp.GetRequiredService<IOptions<EnmaClientOptions>>().Value;
+            client.BaseAddress = options.BaseUrl;
+        });
 
         services.AddSingleton<IEnmaClient>(sp =>
         {
             var options = sp.GetRequiredService<IOptions<EnmaClientOptions>>().Value;
-            var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
-            var httpClient = httpClientFactory.CreateClient(HttpClientName);
-            return new EnmaClient(options, httpClient);
+            var transport = sp.GetRequiredService<HttpEventTransport>();
+            return new EnmaClient(options, transport);
         });
 
         services.AddSingleton<IHostedService, EnmaBackgroundService>();
